@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SierraPics</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="icon" type="image/png" href="logoSierraPics.png">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+</head>
+
+<body>
+  <header id="main-header" class="header">
+    <img src="logoSierraPics.png" alt="SierraPics Logo" class="logo">
+    <h1>SierraPics</h1>
+  </header>
+
+  <!-- Pantalla de Login/Registro -->
+  <div id="screen-auth" class="screen active">
+    <div class="auth-container">
+      
+      <div class="auth-logo">
+        <h1 class="logo-text">SierraPics</h1>
+        <p class="logo-sub">Universidad de la Sierra</p>
+      </div>
+
+      <div class="auth-tabs">
+        <button class="tab-btn active" id="tab-login" onclick="switchTab('login')">Iniciar sesión</button>
+        <button class="tab-btn" id="tab-registro" onclick="switchTab('registro')">Registrarse</button>
+      </div>
+
+      <!-- Formulario: Inicio de Sesión (RF-02) -->
+      <div id="form-login" class="auth-form">
+        <div class="form-group">
+          <label>Correo institucional</label>
+          <input type="email" id="login-email" placeholder="usuario@unisierra.edu.mx" />
+        </div>
+        <div class="form-group">
+          <label>Contraseña</label>
+          <input type="password" id="login-pass" placeholder="Patroclo123"/>
+        </div>
+        <div id="login-error" class="msg-error hidden"></div>
+        <button class="btn-primary" onclick="iniciarSesion()">Entrar</button>
+      </div>
+
+      <!-- Formulario: Registro de usuario (RF-01) -->
+      <div id="form-registro" class="auth-form hidden">
+        <div class="form-group">
+          <label>Nombres</label>
+          <input type="text" id="reg-nombre" placeholder="Nombres" />
+        </div>
+        <div class="form-group">
+          <label>Apellidos</label>
+          <input type="text" id="reg-apellidos" placeholder="Apellidos" />
+        </div>
+        <div class="form-group">
+          <label>Correo institucional</label>
+          <input type="email" id="reg-email" placeholder="usuario@unisierra.edu.mx" />
+        </div>
+        <div class="form-group">
+          <label>Contrase&ntilde;a</label>
+          <input type="password" id="reg-pass" placeholder="M&iacute;nimo 6 caracteres" />
+        </div>
+        <div class="form-group">
+          <label>Confirmar contrase&ntilde;a</label>
+          <input type="password" id="reg-pass2" placeholder="Repetir contrase&ntilde;a" />
+        </div>
+        <div id="reg-error" class="msg-error hidden"></div>
+        <div id="reg-ok" class="msg-ok hidden"></div>
+        <button class="btn-primary" onclick="registrarUsuario()">Crear cuenta</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- PANTALLA: APP PRINCIPAL -->
+  <div id="screen-app" class="screen" style="display:none;">
+
+    <!-- Barra de navegaci&oacute;n -->
+    <nav class="navbar">
+      <div class="nav-logo-container">
+        <img src="logoSierraPics.png" alt="Logo" class="nav-logo-img">
+        <span class="nav-logo-text">SierraPics</span>
+      </div>
+      <div class="nav-links">
+        <button class="nav-btn" onclick="mostrarSeccion('feed')">Publicaciones</button>
+        <button class="nav-btn" onclick="mostrarSeccion('galeria')">Galería</button>
+        <button class="nav-btn" onclick="mostrarSeccion('subir')">Subir</button>
+        <button class="nav-btn nav-btn-usuarios" onclick="mostrarSeccion('usuarios')">Usuarios</button>
+        <button class="nav-btn" onclick="mostrarSeccion('perfil')">Perfil</button>
+        <button class="nav-btn btn-logout" onclick="cerrarSesion()">Salir</button>
+      </div>
+      <button class="hamburger" onclick="toggleMenu()">&#9776;</button>
+    </nav>
+
+    <!-- Men&uacute; m&oacute;vil desplegable -->
+    <div id="mobile-menu" class="mobile-menu hidden">
+      <button onclick="mostrarSeccion('feed');toggleMenu()">Publicaciones</button>
+      <button onclick="mostrarSeccion('galeria');toggleMenu()">Galer&iacute;a</button>
+      <button onclick="mostrarSeccion('subir');toggleMenu()">+ Subir</button>
+      <button class="nav-btn-usuarios" onclick="mostrarSeccion('usuarios');toggleMenu()">Usuarios</button>
+      <button onclick="mostrarSeccion('perfil');toggleMenu()">Perfil</button>
+      <button onclick="cerrarSesion()">Salir</button>
+    </div>
+
+    <main class="main-content">
+
+      <!-- SECCI&Oacute;N: FEED (RF-08) -->
+      <section id="sec-feed" class="seccion">
+        <div class="sec-header">
+          <h2>Publicaciones recientes</h2>
+          <div class="search-bar">
+            <input type="text" id="search-input" placeholder="Buscar por descripci&oacute;n..." oninput="buscarFotos()" />
+            <select id="search-gen" onchange="buscarFotos()">
+              <option value="">Todas las generaciones</option>
+            </select>
+          </div>
+        </div>
+        <div id="feed-container" class="foto-grid"></div>
+      </section>
+
+      <!-- SECCI&Oacute;N: GALERIA POR GENERACION (RF-07) -->
+      <section id="sec-galeria" class="seccion">
+        <div class="sec-header">
+          <h2>Galer&iacute;a por generaci&oacute;n</h2>
+          <select id="galeria-gen" onchange="cargarGaleria()">
+            <option value="">&mdash; Selecciona una generaci&oacute;n &mdash;</option>
+          </select>
+        </div>
+        <div id="galeria-container" class="foto-grid"></div>
+      </section>
+
+      <!-- SECCI&Oacute;N: SUBIR FOTOGRAF&Iacute;A (RF-05, RF-06) -->
+      <section id="sec-subir" class="seccion">
+        <div class="form-card">
+          <h2>Subir fotograf&iacute;a</h2>
+          <div class="form-group">
+            <label>Imagen (JPEG o PNG, m&aacute;x. 5 MB)</label>
+            <input type="file" id="foto-archivo" accept="image/jpeg,image/png" onchange="previsualizarFoto()" />
+          </div>
+          <div id="foto-preview-wrap" class="hidden">
+            <img id="foto-preview" src="" alt="Vista previa" class="img-preview" />
+          </div>
+          <div class="form-group">
+            <label>Descripci&oacute;n</label>
+            <textarea id="foto-desc" placeholder="Escribe una descripci&oacute;n..." rows="3"></textarea>
+          </div>
+          <div class="form-group">
+            <label>Asociar a generaci&oacute;n</label>
+            <select id="foto-gen">
+              <option value="">Sin generaci&oacute;n</option>
+            </select>
+          </div>
+          <div id="subir-error" class="msg-error hidden"></div>
+          <div id="subir-ok" class="msg-ok hidden"></div>
+          <button class="btn-primary" onclick="subirFoto()">Publicar</button>
+        </div>
+      </section>
+
+      <!-- SECCI&Oacute;N: GESTI&Oacute;N DE USUARIOS (RF-04, Admin) -->
+      <section id="sec-usuarios" class="seccion">
+        <div class="sec-header">
+          <h2>Gesti&oacute;n de usuarios</h2>
+        </div>
+        <div class="form-card mb-2">
+          <h3>Crear generaci&oacute;n acad&eacute;mica</h3>
+          <div class="form-row">
+            <input type="text" id="gen-nombre" placeholder="Nombre de la generaci&oacute;n (ej. 2020-2024)" />
+            <button class="btn-secondary" onclick="crearGeneracion()">Agregar</button>
+          </div>
+          <div id="gen-error" class="msg-error hidden"></div>
+          <div id="gen-ok" class="msg-ok hidden"></div>
+          <ul id="lista-generaciones" class="lista-items"></ul>
+        </div>
+        <div class="form-card">
+          <h3>Lista de usuarios</h3>
+          <div class="table-wrap">
+            <table id="tabla-usuarios">
+              <thead>
+                <tr>
+                  <th>Nombre</th>
+                  <th>Correo</th>
+                  <th>Generaci&oacute;n</th>
+                  <th>Asignar generaci&oacute;n</th>
+                  <th>Acci&oacute;n</th>
+                </tr>
+              </thead>
+              <tbody id="tbody-usuarios"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECCI&Oacute;N: PERFIL (RF-14) -->
+      <section id="sec-perfil" class="seccion">
+        <div class="form-card">
+          <div class="perfil-header">
+            <h2 style="font-family:var(--font-display);font-size:1.5rem;color:var(--color-accent)">Mi perfil</h2>
+            <button class="btn-editar-perfil" onclick="abrirModalEditarPerfil()">&#9998; Editar perfil</button>
+          </div>
+          <div class="perfil-info">
+            <!-- El avatar muestra foto si existe, o inicial si no -->
+            <div class="avatar-circle" id="perfil-avatar">
+              <img id="perfil-foto" src="" alt="" class="avatar-img hidden" />
+              <span id="perfil-inicial"></span>
+            </div>
+            <div class="perfil-datos">
+              <p><strong>Nombre:</strong><br><span id="perfil-nombre"></span></p>
+              <p><strong>Correo:</strong><br><span id="perfil-correo"></span></p>
+              <p><strong>Generaci&oacute;n:</strong><br><span id="perfil-gen"></span></p>
+            </div>
+          </div>
+          <h3 class="mt-2">Mis publicaciones</h3>
+          <div id="mis-fotos" class="foto-grid"></div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- MODAL: Detalle de fotograf&iacute;a (RF-09, RF-10, RF-11, RF-12, RF-15) -->
+  <div id="modal-foto" class="modal hidden">
+    <div class="modal-backdrop" onclick="cerrarModal()"></div>
+    <div class="modal-content">
+      <button class="modal-close" onclick="cerrarModal()">&times;</button>
+      <img id="modal-img" src="" alt="" class="modal-img" />
+      <div class="modal-body">
+        <p id="modal-desc" class="modal-desc"></p>
+        <p id="modal-autor" class="modal-meta"></p>
+        <p id="modal-fecha" class="modal-meta"></p>
+        <p id="modal-gen" class="modal-meta"></p>
+
+        <div class="modal-acciones">
+          <button id="btn-like" class="btn-like" onclick="reaccionar()">&#9825; <span id="like-count">0</span></button>
+          <button id="btn-editar" class="btn-secondary" onclick="mostrarEdicion()">&#9998; Editar</button>
+          <button id="btn-eliminar" class="btn-danger" onclick="eliminarFoto()">&#128465; Eliminar</button>
+          <button id="btn-reportar" class="btn-report" onclick="reportarFoto()">&#9873; Reportar</button>
+        </div>
+
+        <div id="edit-wrap" class="hidden mt-1">
+          <textarea id="edit-desc" rows="2"></textarea>
+          <button class="btn-primary mt-1" onclick="guardarEdicion()">Guardar</button>
+          <button class="btn-secondary mt-1" onclick="cancelarEdicion()">Cancelar</button>
+        </div>
+
+        <div class="comentarios-wrap">
+          <h4>Comentarios</h4>
+          <ul id="lista-comentarios" class="lista-comentarios"></ul>
+          <div class="form-row mt-1">
+            <input type="text" id="nuevo-comentario" placeholder="Escribe un comentario..." />
+            <button class="btn-secondary" onclick="agregarComentario()">Enviar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: Editar perfil (RF-14) -->
+  <div id="modal-editar-perfil" class="modal hidden">
+    <div class="modal-backdrop" onclick="cerrarModalEditarPerfil()"></div>
+    <div class="modal-content" style="max-width:460px;">
+      <button class="modal-close" onclick="cerrarModalEditarPerfil()">&times;</button>
+      <div class="modal-body" style="padding-top:1.75rem;">
+        <h3 class="modal-editar-titulo">Editar perfil</h3>
+
+        <!-- Vista previa del avatar dentro del modal -->
+        <div class="modal-avatar-wrap">
+          <div class="avatar-circle avatar-preview" id="modal-avatar-preview">
+            <img id="modal-avatar-img" src="" alt="" class="avatar-img hidden" />
+            <span id="modal-avatar-inicial"></span>
+          </div>
+          <label class="btn-cambiar-foto" for="input-foto-perfil">
+            &#128247; Cambiar foto
+          </label>
+          <input type="file" id="input-foto-perfil" accept="image/jpeg,image/png"
+                 style="display:none" onchange="previsualizarFotoPerfil()" />
+          <button class="btn-quitar-foto hidden" id="btn-quitar-foto" onclick="quitarFotoPerfil()">
+            &#10005; Quitar foto
+          </button>
+        </div>
+
+        <div class="form-group mt-1">
+          <label>Nombres</label>
+          <input type="text" id="edit-perfil-nombre" placeholder="Nombres" />
+        </div>
+        <div class="form-group">
+          <label>Apellidos</label>
+          <input type="text" id="edit-perfil-apellidos" placeholder="Apellidos" />
+        </div>
+        <div id="edit-perfil-error" class="msg-error hidden"></div>
+        <div id="edit-perfil-ok" class="msg-ok hidden"></div>
+        <button class="btn-primary mt-1" onclick="guardarEditarPerfil()">Guardar cambios</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+
+</html>
