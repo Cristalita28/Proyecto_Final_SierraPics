@@ -6,7 +6,7 @@ Plataforma web para compartir y preservar recuerdos académicos mediante fotogra
 **Materia:** Programación Web II  
 **Profesor:** Dr. Jesús Miguel García Gorrostieta  
 
-**Sitio en producción:** https://cristalita28.github.io/SierraPics/
+**Sitio en producción:** https://cristalita28.github.io/Proyecto_Final_SierraPics/
 
 ## Tecnologías utilizadas
 
